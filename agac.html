@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Dünya Kupası Tahmin Aracı</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --match-bg: #1e1e1e;
+            --match-border: #333;
+            --hover-bg: #2c3e50;
+            --header-bg: #1b5e20;
+            --header-text: #81c784;
+            --champion-bg: #d4af37;
+            --champion-text: #000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh; /* Tam ekran yüksekliği */
+            overflow: hidden; /* Kaydırma çubuklarını iptal eder */
+        }
+
+        h1 {
+            color: #4caf50;
+            text-align: center;
+            margin: 0 0 15px 0;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .tournament-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            width: 100%;
+            max-width: 1600px;
+            gap: 15px;
+            flex: 1; /* Kalan tüm yüksekliği kaplar */
+            min-height: 0; 
+        }
+
+        /* Çizgiler için SVG arkaplanı */
+        #lines-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bracket-side {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            z-index: 1;
+        }
+
+        .bracket-side.right {
+            flex-direction: row-reverse;
+        }
+
+        .center-stage {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 260px;
+            padding: 0 10px;
+            z-index: 1;
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* Maçların aralarını eşit açarak tam ekrana yayar */
+            height: 100%;
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .round-title {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--header-text);
+            padding: 5px;
+            background-color: rgba(27, 94, 32, 0.3);
+            border-radius: 4px;
+            border: 1px solid var(--header-bg);
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .match {
+            display: flex;
+            flex-direction: column;
+            background: var(--match-bg);
+            border: 1px solid var(--match-border);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .team {
+            padding: 8px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--match-border);
+            font-size: 13px;
+        }
+
+        .team:last-child {
+            border-bottom: none;
+        }
+
+        .team:hover:not(.winner) {
+            background-color: var(--hover-bg);
+        }
+
+        .team.empty {
+            color: #666;
+            cursor: default;
+        }
+
+        .team.empty:hover {
+            background-color: var(--match-bg);
+        }
+
+        .team.winner {
+            background-color: #1b5e20;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .team.winner:hover {
+            background-color: #2e7d32;
+        }
+
+        .flag {
+            width: 20px;
+            height: 15px;
+            margin-right: 8px;
+            border-radius: 2px;
+            object-fit: cover;
+        }
+
+        .final-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ff9800;
+        }
+
+        .champion-container {
+            text-align: center;
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .champion {
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background-color: var(--champion-bg);
+            color: var(--champion-text);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .champion .flag {
+            width: 28px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .reset-btn {
+            margin-top: 15px;
+            padding: 10px 25px;
+            font-size: 14px;
+            background-color: #b71c1c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .reset-btn:hover { background-color: #d32f2f; }
+    </style>
+</head>
+<body>
+
+    <h1>2026 Dünya Kupası</h1>
+
+    <div class="tournament-wrapper">
+        <svg id="lines-svg"></svg>
+        <div id="tournament" style="display: flex; width: 100%; justify-content: space-between; height: 100%;">
+            </div>
+    </div>    
+    
+<footer>
+    <p style="color: #666; font-style: italic;">@esofiso | 2026</p>
+</footer>
+
+    <button class="reset-btn" onclick="initBracket()">Sıfırla</button>
+
+    <script>
+        const leftInitial = [
+            [{name: "Almanya", code: "de"}, {name: "Paraguay", code: "py"}],
+            [{name: "Fransa", code: "fr"}, {name: "İsveç", code: "se"}],
+            [{name: "Güney Afrika", code: "za"}, {name: "Kanada", code: "ca"}],
+            [{name: "Hollanda", code: "nl"}, {name: "Fas", code: "ma"}],
+            [{name: "Portekiz", code: "pt"}, {name: "Hırvatistan", code: "hr"}],
+            [{name: "İspanya", code: "es"}, {name: "Avusturya", code: "at"}],
+            [{name: "ABD", code: "us"}, {name: "Bosna-Hersek", code: "ba"}],
+            [{name: "Belçika", code: "be"}, {name: "Senegal", code: "sn"}]
+        ];
+
+        const rightInitial = [
+            [{name: "Brezilya", code: "br"}, {name: "Japonya", code: "jp"}],
+            [{name: "Fildişi Sahili", code: "ci"}, {name: "Norveç", code: "no"}],
+            [{name: "Meksika", code: "mx"}, {name: "Ekvador", code: "ec"}],
+            [{name: "İngiltere", code: "gb-eng"}, {name: "Kongo DC", code: "cd"}],
+            [{name: "Arjantin", code: "ar"}, {name: "Yeşil Burun Ad.", code: "cv"}],
+            [{name: "Avustralya", code: "au"}, {name: "Mısır", code: "eg"}],
+            [{name: "İsviçre", code: "ch"}, {name: "Cezayir", code: "dz"}],
+            [{name: "Kolombiya", code: "co"}, {name: "Gana", code: "gh"}]
+        ];
+
+        let state = { 
+            left: [], right: [], 
+            final: [null, null], 
+            champion: null
+        };
+        
+        const roundNames = ["Son 32", "Son 16", "Çeyrek Final", "Yarı Final"];
+
+        function createEmptyRounds(initialData) {
+            let rounds = [initialData];
+            let matchCount = initialData.length;
+            while (matchCount > 1) {
+                matchCount /= 2;
+                rounds.push(Array.from({ length: matchCount }, () => [null, null]));
+            }
+            return rounds;
+        }
+
+        function initBracket() {
+            state.left = createEmptyRounds(leftInitial);
+            state.right = createEmptyRounds(rightInitial);
+            state.final = [null, null];
+            state.champion = null;
+            render();
+        }
+
+        function getFlagImg(code) {
+            if (!code) return '';
+            return `<img src="https://flagcdn.com/w40/${code}.png" class="flag" alt="flag">`;
+        }
+
+        function isWinner(team, roundIndex, matchIndex, side) {
+            if (!team) return false;
+            if (side === 'final') return state.champion && state.champion.code === team.code;
+            
+            if (roundIndex === 3) { 
+                const slot = side === 'left' ? 0 : 1;
+                return state.final[slot] && state.final[slot].code === team.code;
+            }
+            const nextMatch = Math.floor(matchIndex / 2);
+            const nextSlot = matchIndex % 2;
+            const advancedTeam = state[side][roundIndex + 1][nextMatch][nextSlot];
+            return advancedTeam && advancedTeam.code === team.code;
+        }
+
+        function advanceTeam(side, roundIndex, matchIndex, teamIndex) {
+            const team = state[side][roundIndex][matchIndex][teamIndex];
+            if (!team) return;
+
+            if (roundIndex === 3) { 
+                state.final[side === 'left' ? 0 : 1] = team;
+                if (state.champion && state.champion.code !== team.code) state.champion = null; 
+            } else {
+                const nextMatch = Math.floor(matchIndex / 2);
+                const nextSlot = matchIndex % 2;
+                const oldTeam = state[side][roundIndex + 1][nextMatch][nextSlot];
+                
+                state[side][roundIndex + 1][nextMatch][nextSlot] = team;
+                
+                if (oldTeam && oldTeam.code !== team.code) {
+                    removeTeamFromLaterRounds(side, roundIndex + 1, nextMatch, oldTeam.code);
+                }
+            }
+            render();
+        }
+
+        function advanceToChampion(teamIndex) {
+            const team = state.final[teamIndex];
+            if (!team) return;
+            state.champion = team;
+            render();
+        }
+
+        function removeTeamFromLaterRounds(side, startRound, startMatch, teamCode) {
+            let currMatch = startMatch;
+            for (let r = startRound; r <= 3; r++) {
+                if (r === 3) {
+                    const finalSlot = side === 'left' ? 0 : 1;
+                    if (state.final[finalSlot] && state.final[finalSlot].code === teamCode) {
+                        state.final[finalSlot] = null;
+                        if (state.champion && state.champion.code === teamCode) state.champion = null;
+                    }
+                } else {
+                    const nextMatch = Math.floor(currMatch / 2);
+                    const nextSlot = currMatch % 2;
+                    if (state[side][r + 1][nextMatch][nextSlot] && state[side][r + 1][nextMatch][nextSlot].code === teamCode) {
+                        state[side][r + 1][nextMatch][nextSlot] = null;
+                    }
+                    currMatch = nextMatch;
+                }
+            }
+        }
+
+        function createMatchHTML(match, roundIndex, matchIndex, side) {
+            let html = `<div class="match" id="match-${side}-${roundIndex}-${matchIndex}">`;
+            match.forEach((team, teamIndex) => {
+                const isEmpty = !team;
+                const winClass = isWinner(team, roundIndex, matchIndex, side) ? 'winner' : '';
+                
+                let clickAction = '';
+                if (!isEmpty) {
+                    if (side === 'final') clickAction = `onclick="advanceToChampion(${teamIndex})"`;
+                    else clickAction = `onclick="advanceTeam('${side}', ${roundIndex}, ${matchIndex}, ${teamIndex})"`;
+                }
+                
+                html += `
+                    <div class="team ${isEmpty ? 'empty' : ''} ${winClass}" ${clickAction}>
+                        ${isEmpty ? '' : getFlagImg(team.code)}
+                        ${isEmpty ? 'Bekleniyor...' : team.name}
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        function renderSide(sideName) {
+            const sideData = state[sideName];
+            let html = `<div class="bracket-side ${sideName}">`;
+            
+            sideData.forEach((round, roundIndex) => {
+                html += `<div class="round">
+                            <div class="round-title">${roundNames[roundIndex]}</div>`;
+                round.forEach((match, matchIndex) => {
+                    html += createMatchHTML(match, roundIndex, matchIndex, sideName);
+                });
+                html += `</div>`;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        function renderCenter() {
+            let html = `<div class="center-stage">
+                <div class="final-title">FİNAL</div>
+                ${createMatchHTML(state.final, null, null, 'final')}
+                <div class="champion-container">
+                    <div class="final-title" style="color: #d4af37; font-size: 14px; margin-top:0;">DÜNYA ŞAMPİYONU</div>
+                    <div class="champion">
+                        ${state.champion ? getFlagImg(state.champion.code) + state.champion.name : 'Kupa Bekleniyor...'}
+                    </div>
+                </div>
+            </div>`;
+            return html;
+        }
+
+        function drawLines() {
+            const svg = document.getElementById('lines-svg');
+            svg.innerHTML = '';
+            let paths = '';
+            const svgRect = svg.getBoundingClientRect();
+
+            const drawPath = (el1, el2, direction) => {
+                if (!el1 || !el2) return;
+                const r1 = el1.getBoundingClientRect();
+                const r2 = el2.getBoundingClientRect();
+
+                const y1 = r1.top + r1.height / 2 - svgRect.top;
+                const y2 = r2.top + r2.height / 2 - svgRect.top;
+                let x1, x2;
+
+                if (direction === 'right') {
+                    x1 = r1.right - svgRect.left;
+                    x2 = r2.left - svgRect.left;
+                } else {
+                    x1 = r1.left - svgRect.left;
+                    x2 = r2.right - svgRect.left;
+                }
+
+                const midX = (x1 + x2) / 2;
+                paths += `<path d="M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}" 
+                                stroke="#4caf50" stroke-width="2" fill="none" stroke-opacity="0.3" stroke-linejoin="round" />`;
+            };
+
+            for (let r = 0; r < 3; r++) {
+                for (let m = 0; m < state.left[r].length; m++) {
+                    let el1 = document.getElementById(`match-left-${r}-${m}`);
+                    let el2 = document.getElementById(`match-left-${r+1}-${Math.floor(m/2)}`);
+                    drawPath(el1, el2, 'right');
+                }
+            }
+            drawPath(document.getElementById('match-left-3-0'), document.getElementById('match-final-null-null'), 'right');
+
+            for (let r = 0; r < 3; r++) {
+                for (let m = 0; m < state.right[r].length; m++) {
+                    let el1 = document.getElementById(`match-right-${r}-${m}`);
+                    let el2 = document.getElementById(`match-right-${r+1}-${Math.floor(m/2)}`);
+                    drawPath(el1, el2, 'left');
+                }
+            }
+            drawPath(document.getElementById('match-right-3-0'), document.getElementById('match-final-null-null'), 'left');
+
+            svg.innerHTML = paths;
+        }
+
+        function render() {
+            const container = document.getElementById('tournament');
+            container.innerHTML = renderSide('left') + renderCenter() + renderSide('right');
+            requestAnimationFrame(() => { drawLines(); });
+        }
+
+        window.addEventListener('resize', drawLines);
+
+        initBracket();
+    </script>
+</body>
+</html>
