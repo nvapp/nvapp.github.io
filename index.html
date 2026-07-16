@@ -15,7 +15,12 @@
         <header class="header-section">
             <h1 id="location-text">Konum Bekleniyor...</h1>
             <p id="date-text">-- / -- / ----</p>
-            <button id="get-location-btn" class="btn-primary">Konumumu Bul</button>
+            
+            <div class="search-box">
+                <input type="text" id="city-input" placeholder="Şehir adı girin (Örn: Niğde)">
+                <button id="search-btn" class="btn-primary">Ara</button>
+            </div>
+            <button id="get-location-btn" class="btn-secondary" style="margin-top: 10px; background: #6b7280; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">📍 Konumumu Bul (GPS)</button>
         </header>
 
         <section class="countdown-section">
