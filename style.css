@@ -1,0 +1,169 @@
+/* --- RENK PALETİ VE DEĞİŞKENLER --- */
+:root {
+    --bg-color: #f3f4f6;          /* Arka plan rengi (Açık gri) */
+    --card-bg: #ffffff;           /* Ana kart rengi (Beyaz) */
+    --text-main: #1f2937;         /* Ana metin rengi (Koyu gri/siyah) */
+    --text-muted: #6b7280;        /* Pasif metin rengi (Orta gri) */
+    --primary-color: #3b82f6;     /* Vurgu rengi (Mavi) */
+    --primary-hover: #2563eb;     /* Buton üzerine gelinceki mavi */
+    --border-color: #e5e7eb;      /* Kenarlık rengi */
+    --highlight-bg: #eff6ff;      /* Geri sayım alanı arka planı (Açık mavi) */
+}
+
+/* --- GENEL SIFIRLAMA (RESET) --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- ANA KONTEYNER --- */
+.container {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 480px; /* Mobilden tablet boyutuna kadar ideal genişlik */
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Modern, hafif bir gölge */
+}
+
+/* --- ÜST KISIM (HEADER) --- */
+.header-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#location-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+#date-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+/* --- GERİ SAYIM ALANI (ODAK NOKTASI) --- */
+.countdown-section {
+    text-align: center;
+    background-color: var(--highlight-bg);
+    padding: 30px 20px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    border: 1px solid #bfdbfe;
+}
+
+#next-prayer-name {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.countdown-timer {
+    font-size: 3.5rem; /* Büyük ve dikkat çekici boyut */
+    font-weight: 700;
+    letter-spacing: -2px;
+    color: var(--text-main);
+    line-height: 1;
+    margin-bottom: 5px;
+    /* font-variant-numeric: Sayıların saniye değiştikçe sağa sola titremesini engeller */
+    font-variant-numeric: tabular-nums; 
+}
+
+.kalan-sure-etiketi {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* --- VAKİTLER LİSTESİ --- */
+.times-section {
+    margin-top: 20px;
+}
+
+.times-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* İki sütunlu ızgara yapısı */
+    gap: 15px;
+}
+
+.time-card {
+    background-color: var(--bg-color);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+/* Kartın üzerine gelince hafifçe yukarı kalkma efekti */
+.time-card:hover {
+    transform: translateY(-2px);
+}
+
+/* JavaScript ile o anki vaktin kartına eklenecek 'active' sınıfı */
+.time-card.active {
+    border-color: var(--primary-color);
+    background-color: var(--highlight-bg);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.vakit-adi {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.vakit-saati {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* --- MOBİL UYUM (RESPONSIVE) --- */
+@media (max-width: 400px) {
+    .times-list {
+        /* Çok küçük ekranlarda kartları tek sütuna düşür */
+        grid-template-columns: 1fr; 
+    }
+    
+    .countdown-timer {
+        font-size: 2.8rem; /* Mobilde sayacı biraz küçült */
+    }
+}
