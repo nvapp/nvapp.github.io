@@ -1,14 +1,15 @@
 /* --- RENK PALETİ VE DEĞİŞKENLER --- */
-:root {
-    --bg-color: #121212;          /* Arka plan rengi (Derin koyu gri/siyah) */
-    --card-bg: #1e1e1e;           /* Ana kart rengi (Arka plandan biraz daha açık koyu gri) */
-    --text-main: #f3f4f6;         /* Ana metin rengi (Açık gri/beyaz, okunabilirlik için) */
-    --text-muted: #9ca3af;        /* Pasif metin rengi (Orta açık gri) */
-    --primary-color: #991b1b;     /* Vurgu rengi (Koyu kırmızı) */
-    --primary-hover: #b91c1c;     /* Buton üzerine gelinceki renk (Biraz daha canlı kırmızı) */
-    --border-color: #374151;      /* Kenarlık rengi (Belirgin ama göz yormayan koyu gri) */
-    --highlight-bg: #14532d;      /* Geri sayım alanı arka planı (Koyu yeşil) */
+:root { /* veya .dark vb. bir sınıf altına ekleyebilirsiniz */
+    --bg-color: #0f172a;         /* Arka plan rengi (Çok koyu mavi/lacivert) */
+    --card-bg: #1e293b;          /* Ana kart rengi (Derinlik katmak için bir ton açık koyu mavi) */
+    --text-main: #f8fafc;        /* Ana metin rengi (Göz yormayan, beyaza yakın buz grisi) */
+    --text-muted: #94a3b8;       /* Pasif metin rengi (Mavi alt tonlu orta gri) */
+    --primary-color: #10b981;    /* Vurgu rengi (Zümrüt yeşili - koyu zeminde harika okunur) */
+    --primary-hover: #059669;    /* Buton üzerine gelinceki renk (Daha koyu bir yeşil) */
+    --border-color: #334155;     /* Kenarlık rengi (Kartlarla uyumlu koyu mavi-gri) */
+    --highlight-bg: #064e3b;     /* Geri sayım/vurgu alanı arka planı (Oldukça koyu orman yeşili) */
 }
+
 
 /* --- GENEL SIFIRLAMA (RESET) --- */
 * {
