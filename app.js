@@ -127,32 +127,34 @@ function calculateAndDisplayTimes(lat, lng, elevation = 0) {
     const sunsetSunriseAngle = -0.833 - dipAngle; // Atmosferik kırılma + Ufuk alçalması
 
     const latRad = lat * Math.PI / 180;
+    // Asr-ı Evvel: Gölgelerin cisim boyu + öğle gölgesi boyuna ulaştığı an
     const ikindiAngleRad = Math.atan(1 / (1 + Math.tan(Math.abs(latRad - decl))));
     const ikindiAngleDeg = ikindiAngleRad * 180 / Math.PI;
 
+    // Diyanet'in referans ufuk açıları
     const haImsak = getHourAngle(-18);
     const haGunes = getHourAngle(sunsetSunriseAngle); 
     const haIkindi = getHourAngle(ikindiAngleDeg);
     const haYatsi = getHourAngle(-17);
 
-    // Yuvarlama Mantığını Diyanet'e Daha Yakınlaştırma (Aşağı yuvarlayıp + margin ekleme)
+    // Yuvarlama Mantığı: Temkinsiz hesaplamada en yakın dakikaya standart yuvarlama yapılır
     function timeToDate(decimalHours) {
         const d = new Date();
         const h = Math.floor(decimalHours);
-        // Dakika hesaplanırken +0.5 dakika (30 saniye) eklenerek yukarı/aşağı yuvarlama dengelenir
-        const m = Math.floor((decimalHours - h) * 60 + 0.5); 
+        const m = Math.round((decimalHours - h) * 60); 
         d.setHours(h, m, 0, 0);
         return d;
     }
 
-    // Temkin Payları
+    // TERSİNE MÜHENDİSLİK BULGUSU: Tüm manuel temkin payları (8/60, 5/60 vb.) iptal edildi.
+    // Denklem tamamen "Zaman Denklemi + Güneş Deklinasyonu + Ufuk Açısı" üzerine inşa edildi.
     currentPrayerTimes = {
         imsak: timeToDate(solarNoon - haImsak),                          
-        gunes: timeToDate(solarNoon - haGunes - (8 / 60)),               
-        ogle: timeToDate(solarNoon + (5 / 60)),                          
-        ikindi: timeToDate(solarNoon + haIkindi + (4 / 60)),             
-        aksam: timeToDate(solarNoon + haGunes + (8 / 60)),               
-        yatsi: timeToDate(solarNoon + haYatsi)                           
+        gunes: timeToDate(solarNoon - haGunes),                
+        ogle: timeToDate(solarNoon),                          
+        ikindi: timeToDate(solarNoon + haIkindi),              
+        aksam: timeToDate(solarNoon + haGunes),                
+        yatsi: timeToDate(solarNoon + haYatsi)                             
     };
 
     for (const [vakit, dateObj] of Object.entries(currentPrayerTimes)) {
