@@ -1,13 +1,13 @@
 /* --- RENK PALETİ VE DEĞİŞKENLER --- */
 :root {
-    --bg-color: #f3f4f6;          /* Arka plan rengi (Açık gri) */
-    --card-bg: #ffffff;           /* Ana kart rengi (Beyaz) */
-    --text-main: #1f2937;         /* Ana metin rengi (Koyu gri/siyah) */
-    --text-muted: #6b7280;        /* Pasif metin rengi (Orta gri) */
-    --primary-color: #3b82f6;     /* Vurgu rengi (Mavi) */
-    --primary-hover: #2563eb;     /* Buton üzerine gelinceki mavi */
-    --border-color: #e5e7eb;      /* Kenarlık rengi */
-    --highlight-bg: #eff6ff;      /* Geri sayım alanı arka planı (Açık mavi) */
+    --bg-color: #121212;          /* Arka plan rengi (Derin koyu gri/siyah) */
+    --card-bg: #1e1e1e;           /* Ana kart rengi (Arka plandan biraz daha açık koyu gri) */
+    --text-main: #f3f4f6;         /* Ana metin rengi (Açık gri/beyaz, okunabilirlik için) */
+    --text-muted: #9ca3af;        /* Pasif metin rengi (Orta açık gri) */
+    --primary-color: #991b1b;     /* Vurgu rengi (Koyu kırmızı) */
+    --primary-hover: #b91c1c;     /* Buton üzerine gelinceki renk (Biraz daha canlı kırmızı) */
+    --border-color: #374151;      /* Kenarlık rengi (Belirgin ama göz yormayan koyu gri) */
+    --highlight-bg: #14532d;      /* Geri sayım alanı arka planı (Koyu yeşil) */
 }
 
 /* --- GENEL SIFIRLAMA (RESET) --- */
